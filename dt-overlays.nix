@@ -1,8 +1,8 @@
-{ linux, linuxDtbsFor, stdenvNoCC, dtc, callPackage }:
+{ linux, linuxDtbsFor, stdenv, dtc, callPackage }:
 
 let
   linux-dtbs = linuxDtbsFor linux { filter = "bcm*-rpi-*.dtb"; };
-in stdenvNoCC.mkDerivation {
+in stdenv.mkDerivation {
   name = "dt-overlays";
   version = "0.1.0";
   src = ./src;
@@ -10,14 +10,16 @@ in stdenvNoCC.mkDerivation {
   nativeBuildInputs = [ dtc ];
 
   buildPhase = ''
-    for dts in $(find . -type f); do
-      dtc -@ -I dts -O dtb $dts > $(basename $dts .dts).dtbo
-    done
+    make all KDIR=${linux.dev}/lib/modules/${linux.modDirVersion}/build
   '';
 
   installPhase = ''
     mkdir $out
     cp ./*.dtbo $out
+
+    MODDIR=$out/lib/modules/${linux.modDirVersion}/extra
+    mkdir -p $MODDIR
+    cp ./*.ko $MODDIR
   '';
 
   doCheck = true;
