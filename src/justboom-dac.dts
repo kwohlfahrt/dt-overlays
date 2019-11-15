@@ -12,6 +12,19 @@
 		};
 	};
 
+	fragment@3 {
+		target-path = "/soc";
+		__overlay__ {
+			vdd_3v3_reg: fixedregulator_3v3 {
+				compatible = "regulator-fixed";
+				regulator-name = "3v3";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				regulator-always-on;
+			};
+		};
+	};
+
 	fragment@1 {
 		target = <&i2c1>;
 		__overlay__ {
@@ -32,15 +45,13 @@
 	};
 
 	fragment@2 {
-		target = <&sound>;
-		frag2: __overlay__ {
-			compatible = "justboom,justboom-dac";
-			i2s-controller = <&i2s>;
-			status = "okay";
+		target-path = "/soc";
+		__overlay__ {
+			sound: sound {
+				compatible = "justboom,justboom-dac";
+				i2s-controller = <&i2s>;
+				status = "okay";
+			};
 		};
-	};
-
-	__overrides__ {
-		24db_digital_gain = <&frag2>,"justboom,24db_digital_gain?";
 	};
 };

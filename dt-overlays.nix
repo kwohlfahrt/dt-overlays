@@ -1,7 +1,7 @@
-{ linux, stdenvNoCC, dtc, callPackage }:
+{ linux, linuxDtbsFor, stdenvNoCC, dtc, callPackage }:
 
 let
-  linux-dtbs = callPackage ./linux-dtbs.nix {};
+  linux-dtbs = linuxDtbsFor linux { filter = "bcm*-rpi-*.dtb"; };
 in stdenvNoCC.mkDerivation {
   name = "dt-overlays";
   version = "0.1.0";
@@ -10,7 +10,9 @@ in stdenvNoCC.mkDerivation {
   nativeBuildInputs = [ dtc ];
 
   buildPhase = ''
-    dtc -@ -I dts -O dtb ./w1-gpio.dts > ./w1-gpio.dtbo
+    for dts in $(find . -type f); do
+      dtc -@ -I dts -O dtb $dts > $(basename $dts .dts).dtbo
+    done
   '';
 
   installPhase = ''
@@ -21,8 +23,14 @@ in stdenvNoCC.mkDerivation {
   doCheck = true;
   checkInputs = [ dtc ];
   checkPhase = ''
-    fdtoverlay -v -o test.dtb -i ${linux-dtbs}/dtbs/broadcom/bcm2837-rpi-3-b-plus.dtb ./w1-gpio.dtbo
-    # fdtoverlay exits with 0 even if it fails, so check for output
-    ls -l test.dtb
+    for overlay in $(find . -type f -name "*.dtbo"); do
+      for base in $(find ${linux-dtbs} -type f); do
+        echo Testing $(basename $overlay) onto $(basename $base)
+        # fdtoverlay exits with 0 even if it fails, so check for output
+        rm -f test.dtb
+        fdtoverlay -o test.dtb -i $base $overlay
+        ls -l test.dtb > /dev/null
+      done
+    done
   '';
 }
