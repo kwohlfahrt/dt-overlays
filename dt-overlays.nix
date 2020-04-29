@@ -10,16 +10,12 @@ in stdenv.mkDerivation {
   nativeBuildInputs = [ dtc ];
 
   buildPhase = ''
-    make all KDIR=${linux.dev}/lib/modules/${linux.modDirVersion}/build
+    make dtbos KDIR=${linux.dev}/lib/modules/${linux.modDirVersion}/build
   '';
 
   installPhase = ''
     mkdir $out
     cp ./*.dtbo $out
-
-    MODDIR=$out/lib/modules/${linux.modDirVersion}/extra
-    mkdir -p $MODDIR
-    cp ./*.ko $MODDIR
   '';
 
   doCheck = true;

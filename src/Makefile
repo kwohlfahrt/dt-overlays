@@ -5,8 +5,11 @@ dtbos: w1-gpio.dtbo justboom-dac.dtbo
 
 obj-m += justboom-dac.o
 
-all: dtbos
+modules:
 	$(MAKE) -C $(KDIR) M=$(PWD) modules
+
+.PHONY: all
+all: dtbos modules
 
 clean:
 	rm -f *.dtbo
