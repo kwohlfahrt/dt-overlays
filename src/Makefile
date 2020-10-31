@@ -3,7 +3,7 @@
 
 dtbos: w1-gpio.dtbo justboom-dac.dtbo
 
-obj-m += justboom-dac.o
+obj-m += snd-soc-justboom-dac.o
 
 modules:
 	$(MAKE) -C $(KDIR) M=$(PWD) modules

@@ -69,9 +69,9 @@ static struct snd_soc_ops snd_rpi_justboom_dac_ops = {
 };
 
 SND_SOC_DAILINK_DEFS(hifi,
-	DAILINK_COMP_ARRAY(COMP_CPU("bcm2708-i2s.0")),
+	DAILINK_COMP_ARRAY(COMP_CPU("bcm2835-i2s.0")),
 	DAILINK_COMP_ARRAY(COMP_CODEC("pcm512x.1-004d", "pcm512x-hifi")),
-	DAILINK_COMP_ARRAY(COMP_PLATFORM("bcm2708-i2s.0")));
+	DAILINK_COMP_ARRAY(COMP_PLATFORM("bcm2835-i2s.0")));
 
 static struct snd_soc_dai_link snd_rpi_justboom_dac_dai[] = {
 {
