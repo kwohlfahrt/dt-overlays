@@ -1,11 +1,11 @@
-{ linux, stdenv, callPackage }:
+{ linux, stdenv, callPackage, pahole }:
 
 stdenv.mkDerivation {
   name = "dt-modules";
   version = "0.1.0";
   src = ./src;
 
-  nativeBuildInputs = [];
+  nativeBuildInputs = [ pahole ];
 
   buildPhase = ''
     make modules KDIR=${linux.dev}/lib/modules/${linux.modDirVersion}/build
